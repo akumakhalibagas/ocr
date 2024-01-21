@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".presentation.PatternActivity">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_patter_show"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="12dp"
+        android:background="@drawable/shape_et"
+        android:text="[0-9][0-9][0-9][0-9][0-9][0-9] [0-9]P" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_patter_edit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="12dp"
+        android:background="@drawable/shape_et"
+        android:text="[0-9][0-9][0-9][0-9][0-9][0-9] [0-9]P" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/purple_500"
+        android:text="Save"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
