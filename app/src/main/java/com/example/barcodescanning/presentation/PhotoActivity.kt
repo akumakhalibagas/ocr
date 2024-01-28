@@ -41,7 +41,7 @@ class PhotoActivity : AppCompatActivity() {
         binding = ActivityPhotoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+        cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
         imgCaptureExecutor = Executors.newSingleThreadExecutor()
         cameraPermissionResult.launch(android.Manifest.permission.CAMERA)
         sharedPreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
@@ -59,7 +59,7 @@ class PhotoActivity : AppCompatActivity() {
             val cameraProvider = cameraProviderFuture.get()
             imageCapture = ImageCapture.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                .setJpegQuality(30)
+                .setJpegQuality(100)
                 .build()
             imagePreview = Preview.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_16_9)

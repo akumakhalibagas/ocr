@@ -1,15 +1,13 @@
 package com.example.barcodescanning.presentation
 
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.barcodescanning.data.OcrViewModel
@@ -92,14 +90,28 @@ class TextRecognitionActivity : AppCompatActivity() {
                 val regex = Regex(customPattern.toString())
                 var matchFound = false
 
-                for (match in regex.findAll(text)) {
-                    matchFound = true
-                    toWa("---Hasil Pattern---\n\n${match.value}\n\n\n---Hasil OCR---\n\n${text}")
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Kino OCR")
+                builder.setMessage("--Hasil OCR---\n\n${text}")
+                builder.setNegativeButton("Copy") { dialog, which ->
+                    val clipboardManager =
+                        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clipData = ClipData.newPlainText("label", text)
+                    clipboardManager.setPrimaryClip(clipData)
+                    Toast.makeText(this, "Text copied to clipboard!", Toast.LENGTH_SHORT).show()
                 }
-
-                if (!matchFound) {
-                    toWa("---Hasil OCR---\n\n$text")
+                builder.setPositiveButton("OK") { dialog, which ->
+                    dialog.dismiss()
                 }
+                builder.create().show()
+//                for (match in regex.findAll(text)) {
+//                    matchFound = true
+//                    toWa("---Hasil Pattern---\n\n${match.value}\n\n\n---Hasil OCR---\n\n${text}")
+//                }
+//
+//                if (!matchFound) {
+//                    toWa("---Hasil OCR---\n\n$text")
+//                }
             }
         }
     }
@@ -131,14 +143,29 @@ class TextRecognitionActivity : AppCompatActivity() {
             val regex = Regex(customPattern.toString())
             var matchFound = false
 
-            for (match in regex.findAll(textResult)) {
-                matchFound = true
-                toWa("---Hasil Pattern---\n\n${match.value}\n\n\n---Hasil OCR---\n\n${textResult}")
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Kino OCR")
+            builder.setMessage("--Hasil OCR---\n\n${text}")
+            builder.setNegativeButton("Copy") { dialog, which ->
+                val clipboardManager =
+                    getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clipData = ClipData.newPlainText("label", textResult)
+                clipboardManager.setPrimaryClip(clipData)
+                Toast.makeText(this, "Text copied to clipboard!", Toast.LENGTH_SHORT).show()
             }
+            builder.setPositiveButton("OK") { dialog, which ->
+                dialog.dismiss()
+            }
+            builder.create().show()
 
-            if (!matchFound) {
-                toWa("---Hasil OCR---\n\n$textResult")
-            }
+//            for (match in regex.findAll(textResult)) {
+//                matchFound = true
+//                toWa("---Hasil Pattern---\n\n${match.value}\n\n\n---Hasil OCR---\n\n${textResult}")
+//            }
+//
+//            if (!matchFound) {
+//                toWa("---Hasil OCR---\n\n$textResult")
+//            }
         }
     }
 
