@@ -1,14 +1,19 @@
 package com.example.barcodescanning.presentation
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.*
+import androidx.camera.core.ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.barcodescanning.databinding.ActivityPhotoSecondBinding
@@ -45,6 +50,7 @@ class PhotoSecondActivity : AppCompatActivity() {
         setContentView(binding.root)
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+
         imgCaptureExecutor = Executors.newSingleThreadExecutor()
         cameraPermissionResult.launch(android.Manifest.permission.CAMERA)
         sharedPreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
@@ -62,7 +68,8 @@ class PhotoSecondActivity : AppCompatActivity() {
             val cameraProvider = cameraProviderFuture.get()
             imageCapture = ImageCapture.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_DEFAULT)
-                .setJpegQuality(30)
+                .setJpegQuality(100)
+                .setCaptureMode(CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
             imagePreview = Preview.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_DEFAULT)
@@ -77,6 +84,13 @@ class PhotoSecondActivity : AppCompatActivity() {
             }
         }, ContextCompat.getMainExecutor(this))
     }
+
+    private fun flipBitmapHorizontal(originalBitmap: Bitmap): Bitmap {
+        val matrix = Matrix()
+        matrix.preScale(-1.0f, 1.0f) // Horizontal flip
+        return Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.width, originalBitmap.height, matrix, true)
+    }
+
 
     private fun saveBarcode() {
         val sales = sharedPreferences.getString("sales", "kino")
@@ -95,7 +109,11 @@ class PhotoSecondActivity : AppCompatActivity() {
 
                 override fun onError(exception: ImageCaptureException) {
                     runOnUiThread {
-                        Toast.makeText(this@PhotoSecondActivity, "Error taking photo", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            this@PhotoSecondActivity,
+                            "Error taking photo",
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                     }
                 }
@@ -130,6 +148,13 @@ class PhotoSecondActivity : AppCompatActivity() {
                 val builder = AlertDialog.Builder(this@PhotoSecondActivity)
                 builder.setTitle("Kino OCR")
                 builder.setMessage("--Hasil OCR---\n\n${text}")
+                builder.setNegativeButton("Copy") { dialog, which ->
+                    val clipboardManager =
+                        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clipData = ClipData.newPlainText("label", text)
+                    clipboardManager.setPrimaryClip(clipData)
+                    Toast.makeText(this, "Text copied to clipboard!", Toast.LENGTH_SHORT).show()
+                }
                 builder.setPositiveButton("OK") { dialog, which ->
                     dialog.dismiss()
                 }
